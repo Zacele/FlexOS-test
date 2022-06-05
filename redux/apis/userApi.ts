@@ -1,20 +1,26 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { User } from "../../types/userTypes";
 import { setUser } from "../features/userSlice";
-
-const BASE_URL = process.env.REACT_APP_SERVER_ENDPOINT as string;
+import type { AppState } from "../store";
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${BASE_URL}/api/users/`,
+    baseUrl: process.env.CUSTOM_NODEJS_SERVER,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as AppState).authState.token;
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getMe: builder.query<User, null>({
       query() {
         return {
-          url: "me",
+          url: "user",
           credentials: "include",
         };
       },

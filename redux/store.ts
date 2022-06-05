@@ -1,6 +1,7 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { authApi } from "./apis/authApi";
 import { userApi } from "./apis/userApi";
+import AuthReducer from "./features/authSlice";
 import UserReducer from "./features/userSlice";
 
 export function makeStore() {
@@ -9,6 +10,7 @@ export function makeStore() {
       [authApi.reducerPath]: authApi.reducer,
       [userApi.reducerPath]: userApi.reducer,
       userState: UserReducer,
+      authState: AuthReducer
     },
     devTools: process.env.NODE_ENV === "development",
     middleware: (getDefaultMiddleware) =>

@@ -1,7 +1,10 @@
+import { NextPage, NextPageContext } from "next";
 import React from "react";
 import { useLoginUserMutation } from "../redux/apis/authApi";
+import { checkCookies } from "cookies-next";
+import { setToken } from "../redux/features/authSlice";
 
-const Login = () => {
+const Login: NextPage = () => {
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   // API Login Mutation
@@ -10,10 +13,9 @@ const Login = () => {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(email, password);
-    await loginUser({ email: email, password: password });
+    await loginUser({ email, password });
     if (isSuccess) {
-      console.log("success");
+      // setToken(document)
     }
   };
 
@@ -63,5 +65,15 @@ const Login = () => {
     </div>
   );
 };
+
+export async function getServerSideProps({ req, res }: NextPageContext) {
+  const tokenInCookie = checkCookies("token", { req, res });
+  if (tokenInCookie) {
+    res?.writeHead(303, { Location: "/" });
+    res?.end();
+  }
+
+  return { props: {} };
+}
 
 export default Login;
