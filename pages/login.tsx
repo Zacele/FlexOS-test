@@ -2,20 +2,19 @@ import { NextPage, NextPageContext } from "next";
 import React from "react";
 import { useLoginUserMutation } from "../redux/apis/authApi";
 import { checkCookies } from "cookies-next";
-import { setToken } from "../redux/features/authSlice";
+import Router from "next/router";
 
 const Login: NextPage = () => {
-  const [email, setEmail] = React.useState<string>("");
-  const [password, setPassword] = React.useState<string>("");
+  const [email, setEmail] = React.useState<string>("testuser@flexos.com");
+  const [password, setPassword] = React.useState<string>("password");
   // API Login Mutation
-  const [loginUser, { isLoading, isError, error, isSuccess }] =
-    useLoginUserMutation();
+  const [loginUser] = useLoginUserMutation();
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await loginUser({ email, password });
-    if (isSuccess) {
-      // setToken(document)
+    const result = await loginUser({ email, password }).unwrap();
+    if (result.data) {
+      Router.push("/");
     }
   };
 
@@ -33,6 +32,7 @@ const Login: NextPage = () => {
               type="email"
               className={`w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4`}
               id="email"
+              value={email}
               placeholder="Your Email"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
@@ -45,6 +45,7 @@ const Login: NextPage = () => {
               type="password"
               className={`w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4`}
               id="password"
+              value={password}
               placeholder="Your Password"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)

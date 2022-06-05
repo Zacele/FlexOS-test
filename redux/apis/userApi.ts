@@ -24,13 +24,17 @@ export const userApi = createApi({
           credentials: "include",
         };
       },
-      transformResponse: (result: { data: { user: User } }) => result.data.user,
+      transformResponse: (result: User) => result,
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-        } catch (error) {}
+        } catch (error) {
+          console.error("error", error);
+        }
       },
     }),
   }),
 });
+
+export const { useGetMeQuery } = userApi;

@@ -10,7 +10,7 @@ export function makeStore() {
       [authApi.reducerPath]: authApi.reducer,
       [userApi.reducerPath]: userApi.reducer,
       userState: UserReducer,
-      authState: AuthReducer
+      authState: AuthReducer,
     },
     devTools: process.env.NODE_ENV === "development",
     middleware: (getDefaultMiddleware) =>
