@@ -5,6 +5,7 @@ import type { AppState } from "../store";
 
 export const userApi = createApi({
   reducerPath: "userApi",
+  tagTypes: ["User"],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.CUSTOM_NODEJS_SERVER,
     prepareHeaders: (headers, { getState }) => {
@@ -15,7 +16,6 @@ export const userApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User"],
   endpoints: (builder) => ({
     getMe: builder.query<User, null>({
       query() {

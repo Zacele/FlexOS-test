@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCookie } from "../../helpers";
-import { LoginRequest } from "../../types/userTypes";
+import { LoginRequest, LoginResponse } from "../../types/userTypes";
 import { userApi } from "./userApi";
 
 export const authApi = createApi({
   reducerPath: "authApi",
+  tagTypes: ["Auth"],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.CUSTOM_NODEJS_SERVER,
   }),
@@ -28,7 +29,7 @@ export const authApi = createApi({
           credentials: "include",
         };
       },
-      async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           if (data) {
