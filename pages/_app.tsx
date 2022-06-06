@@ -4,6 +4,7 @@ import store from "../redux/store";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "next-themes";
 import { NextPage } from "next";
+import axios from "axios";
 
 import "../styles/globals.css";
 

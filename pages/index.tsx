@@ -5,7 +5,6 @@ import Layout from "../components/Layout";
 import { checkCookies, getCookie } from "cookies-next";
 import { NextPageWithLayout } from "./_app";
 import { useAppSelector, useAppDispatch } from "../hooks";
-import { useGetOptionsQuery } from '../redux/apis/optionsApi'
 import { logout, setToken } from "../redux/features/authSlice";
 import { useGetMeQuery } from "../redux/apis/userApi";
 import Router from "next/router";
@@ -22,8 +21,7 @@ const Home: NextPageWithLayout = () => {
   const [currentWeek, setCurrentWeek] = React.useState<string[]>(daysInCurrentWeek())
   const [currentWeekIndex, setCurrentWeekIndex] = React.useState<number>(0)
   const token = useAppSelector((state) => state.authState.token);
-  const { data: userData, isError: isFetchingUserError } = useGetMeQuery(null, { skip: skipFetchData });
-  const { data: optionsData, isLoading, isError } = useGetOptionsQuery(null, { skip: skipFetchData })
+  const { isError: isFetchingUserError } = useGetMeQuery(null, { skip: skipFetchData });
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
@@ -61,8 +59,8 @@ const Home: NextPageWithLayout = () => {
   }, [currentWeek])
 
   return (
-    <div className="container mx-auto">
-      <div className="w-full h-full overflow-y-auto">
+    <div className="w-screen h-screen mx-auto overflow-y-auto">
+      <div className="container h-full mx-auto ">
         <div className="flex w-full justify-between align-middle mt-10 pb-4 mb-[22px] shadow-[0px_1px_0px_#E5E7EB] h-[72px]">
           <h3 className="text-2xl font-semibold leading-9 font-Inter">
             {displayTextHeader()}

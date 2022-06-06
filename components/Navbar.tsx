@@ -1,8 +1,6 @@
-import Head from "next/head";
-
 export default function Navbar() {
   return (
-    <div className="flex flex-col justify-between w-16 h-screen bg-white border-r">
+    <div className="absolute inset-y-0 left-0 flex-col justify-between w-16 h-screen overflow-hidden bg-white md:flex">
       <div>
         <div className="inline-flex items-center justify-center w-16 h-16">
           <span className="block w-10 h-10 bg-gray-200 rounded-lg"></span>

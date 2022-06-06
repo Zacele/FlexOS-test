@@ -5,7 +5,7 @@ import type { AppState } from "../store";
 export const optionsApi = createApi({
   reducerPath: "optionsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.CUSTOM_NODEJS_SERVER,
+    baseUrl: process.env.API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as AppState).authState.token;
       if (token) {
@@ -20,7 +20,6 @@ export const optionsApi = createApi({
       query() {
         return {
           url: "options",
-          credentials: "include",
         };
       },
     }),

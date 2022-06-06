@@ -7,7 +7,7 @@ export const userApi = createApi({
   reducerPath: "userApi",
   tagTypes: ["User"],
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.CUSTOM_NODEJS_SERVER,
+    baseUrl: process.env.API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as AppState).authState.token;
       if (token) {
@@ -21,7 +21,6 @@ export const userApi = createApi({
       query() {
         return {
           url: "user",
-          credentials: "include",
         };
       },
       transformResponse: (result: User) => result,

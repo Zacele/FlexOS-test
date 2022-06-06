@@ -7,7 +7,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   tagTypes: ["Auth"],
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.CUSTOM_NODEJS_SERVER,
+    baseUrl: process.env.API_URL,
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation<
@@ -26,10 +26,9 @@ export const authApi = createApi({
             email: credentials.email,
             password: credentials.password,
           },
-          credentials: "include",
         };
       },
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           if (data) {

@@ -2,16 +2,38 @@ import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faPen } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "react-multi-carousel";
-import { format, isToday } from 'date-fns'
+import { format, isToday, roundToNearestMinutes } from 'date-fns'
 import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
+import useAxios from 'axios-hooks'
+import axios from 'axios'
+import { getCookie } from "cookies-next";
+import { Event } from "../types/eventTypes";
 
 type DataCardProps = {
-  currentDay: string
+  currentDay: string,
 }
 
 const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
+  axios.interceptors.request.use(
+    async (config) => {
+      const tokenInCookie = getCookie("token");
+
+      if (tokenInCookie) {
+        config.headers = {
+          authorization: `Bearer ${tokenInCookie}`
+        };
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
   const carouselRef = React.useRef(null)
+
+  const [{ data: eventsData, loading, error }, refetch] = useAxios(
+    `${process.env.API_URL}events?date=${currentDay}`
+  )
 
   const responsive = {
     desktop: {
@@ -22,7 +44,7 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
   };
 
   return (
-    <div className="w-full border rounded-lg border-[1px_solid_#CCCDFF] mb-6">
+    <div className={`w-full border rounded-lg border-[1px_solid_#CCCDFF] mb-6 ${eventsData?.data.length > 0 ? 'pb-6' : ''}`}>
       <div className={`${isToday(new Date(currentDay)) ? 'bg-[#F5F3FF]' : 'bg-[#F3F4F6]'} ${isToday(new Date(currentDay)) ? 'shadow-[0px_1px_0px_#CCCDFF]' : 'shadow-none'} w-full p-3 flex justify-between`}>
         <div className="flex">
           <div className="flex flex-col px-2 mt-1 text-center">
@@ -56,63 +78,53 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
         </div>
       </div>
 
-      <div className='mx-6 mt-6 bg-white'>
-        <div className='flex items-center justify-between'>
-          <p className='font-Inter'>Events</p>
-          <div className="flex w-[10%] justify-between">
-            <button className="btn btn-ghost" onClick={() => {
-              carouselRef.current?.previous();
-            }}>
-              <Image src="/svg/arrow-left.svg" height={16} width={10} />
-            </button>
-            <button className="btn btn-ghost" onClick={() => {
-              carouselRef.current?.next()
-            }}>
-              <Image src="/svg/arrow-right.svg" height={16} width={10} />
-            </button>
+      {eventsData?.data.length > 0 &&
+        <React.Fragment>
+          <div className='mx-6 mt-6 bg-white'>
+            <div className='flex items-center justify-between'>
+              <p className='font-Inter'>Events</p>
+              {eventsData?.data.length > 1 &&
+                <div className="flex w-[10%] justify-between">
+                  <button className="btn btn-ghost" onClick={() => {
+                    carouselRef.current?.previous();
+                  }}>
+                    <Image src="/svg/arrow-left.svg" height={16} width={10} />
+                  </button>
+                  <button className="btn btn-ghost" onClick={() => {
+                    carouselRef.current?.next()
+                  }}>
+                    <Image src="/svg/arrow-right.svg" height={16} width={10} />
+                  </button>
+                </div>
+              }
+            </div>
           </div>
-        </div>
-        <div className='mt-4'>
-          <Carousel
-            ref={carouselRef}
-            responsive={responsive}
-            swipeable={false}
-            infinite={true}
-            arrows={false}
-            autoPlaySpeed={10000000}
-            draggable={false}>
-            <div className='w-[95%] flex border border-[#E5E7EB] p-2 rounded-lg'>
-              <Image width={120} height={90} src={'/images/Webinar.jpeg'} className='rounded' />
-              <div className='flex flex-col ml-4'>
-                <p className='font-Inter text-sm text-[#4F46E5] mb-2 pt-1'>17:00 - 18:30</p>
-                <p className='text-base text-black font-Inter'>Improv Workshop: Spark your creativity</p>
-              </div>
-            </div>
-            <div className='w-[95%] flex border border-[#E5E7EB] p-2 rounded-lg'>
-              <Image width={120} height={90} src={'/images/Webinar.jpeg'} className='rounded' />
-              <div className='flex flex-col ml-4'>
-                <p className='font-Inter text-sm text-[#4F46E5] mb-2 pt-1'>17:00 - 18:30</p>
-                <p className='text-base text-black font-Inter'>Improv Workshop: Spark your creativity</p>
-              </div>
-            </div>
-            <div className='w-[95%] flex border border-[#E5E7EB] p-2 rounded-lg'>
-              <Image width={120} height={90} src={'/images/Webinar.jpeg'} className='rounded' />
-              <div className='flex flex-col ml-4'>
-                <p className='font-Inter text-sm text-[#4F46E5] mb-2 pt-1'>17:00 - 18:30</p>
-                <p className='text-base text-black font-Inter'>Improv Workshop: Spark your creativity</p>
-              </div>
-            </div>
-            <div className='w-[95%] flex border border-[#E5E7EB] p-2 rounded-lg'>
-              <Image width={120} height={90} src={'/images/Webinar.jpeg'} className='rounded' />
-              <div className='flex flex-col ml-4'>
-                <p className='font-Inter text-sm text-[#4F46E5] mb-2 pt-1'>17:00 - 18:30</p>
-                <p className='text-base text-black font-Inter'>Improv Workshop: Spark your creativity</p>
-              </div>
-            </div>
-          </Carousel>
-        </div>
-      </div>
+          <div className='mt-4'>
+            <Carousel
+              ref={carouselRef}
+              responsive={responsive}
+              swipeable={false}
+              infinite={true}
+              arrows={false}
+              autoPlaySpeed={10000000}
+              draggable={false}>
+              {eventsData?.data.map((event: Event) => (
+                <React.Fragment key={event.id}>
+                  <div className='w-[90%] ml-[4%] flex border border-[#E5E7EB] p-2 rounded-lg'>
+                    <Image width={120} height={90} src={event.image[0].preview_thumbnail} className='rounded' />
+                    <div className='flex flex-col ml-4'>
+                      <p className='font-Inter text-sm text-[#4F46E5] mb-2 pt-1'>{event.starts} - {event.ends}</p>
+                      <p className='text-base text-black font-Inter'>{event.name}</p>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </Carousel>
+          </div>
+        </React.Fragment>
+      }
     </div>
+
   );
 };
 

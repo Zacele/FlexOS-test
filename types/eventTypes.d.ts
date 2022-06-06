@@ -1,4 +1,4 @@
-export type Events = {
+export type Event = {
   id: number;
   name: string;
   date: string
@@ -12,5 +12,5 @@ export type Events = {
 };
 
 export interface EventsResponses {
-  data: Events[];
+  data: Event[];
 }
