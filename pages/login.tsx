@@ -5,10 +5,10 @@ import { checkCookies } from "cookies-next";
 import Router from "next/router";
 
 const Login: NextPage = () => {
-  const [email, setEmail] = React.useState<string>("testuser@flexos.com");
-  const [password, setPassword] = React.useState<string>("password");
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
   // API Login Mutation
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, { isLoading: isUpdating, error }] = useLoginUserMutation();
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,11 +17,20 @@ const Login: NextPage = () => {
       Router.push("/");
     }
   };
-
+  
   return (
-    <div className="h-screen flex bg-gray-bg1">
-      <div className="w-full max-w-md m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
-        <h1 className="text-2xl font-medium text-primary mt-4 mb-12 text-center">
+    <div className="flex h-screen bg-gray-bg1">
+
+      <div className="w-full max-w-md px-16 py-10 m-auto bg-white border rounded-lg border-primaryBorder shadow-default">
+        {error &&
+          <div className="shadow-lg alert alert-error">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span>{error?.data?.message || 'Something went wrong'}</span>
+            </div>
+          </div>
+        }
+        <h1 className="mt-4 mb-12 text-2xl font-medium text-center text-primary">
           Log in to your account 🔐
         </h1>
 
@@ -53,17 +62,17 @@ const Login: NextPage = () => {
             />
           </div>
 
-          <div className="flex justify-center items-center mt-6">
+          <div className="flex items-center justify-center mt-6">
             <button
               className="btn btn-outline btn-primary disabled:text-white disabled:cursor-not-allowed"
-              disabled={email === "" || password === ""}
+              disabled={email === "" || password === "" || isUpdating}
             >
               Login
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </div >
   );
 };
 

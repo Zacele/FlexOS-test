@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setCookie } from "../../helpers";
-import { LoginRequest, LoginResponse } from "../../types/userTypes";
+import { LoginRequest } from "../../types/userTypes";
 import { userApi } from "./userApi";
+import { setCookies } from "cookies-next";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -33,7 +33,9 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           if (data) {
             // SET TOKEN COOKIE TO EXPIRE IN 1 DAY
-            setCookie("token", data.data.bearer_token, 1);
+            setCookies("token", data.data.bearer_token, {
+              maxAge: 60 * 60 * 24,
+            });
             await dispatch(userApi.endpoints.getMe.initiate(null));
           }
         } catch (error) {

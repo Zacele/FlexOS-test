@@ -2,7 +2,7 @@ import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faPen } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "react-multi-carousel";
-import { format, isToday, roundToNearestMinutes } from 'date-fns'
+import { format, isToday } from 'date-fns'
 import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
 import useAxios from 'axios-hooks'
@@ -64,33 +64,45 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-between mr-2">
-          <FontAwesomeIcon className={`mr-12 ${!isToday(new Date(currentDay)) ? "ml-[50%]" : ''} text-gray-500`} icon={faPen} />{" "}
+        <div className="flex items-center justify-between mr-2 collapse">
+          <label htmlFor='skip-modal'>
+            <FontAwesomeIcon className={`mr-12 ${!isToday(new Date(currentDay)) ? "ml-[50%]" : ''} text-gray-500 hover:cursor-pointer`} icon={faPen} />{" "}
+          </label>
+          <input type="checkbox" id='skip-modal' className="hidden modal-toggle" />
+          <label htmlFor='skip-modal' className="cursor-pointer modal">
+            <label className="relative modal-box" htmlFor='skip-modal'>
+              <h3 className="text-lg font-bold">Disabled!</h3>
+              <p className="py-4">Disabled for now. Discussed with Modestas in email.</p>
+            </label>
+          </label>
           {isToday(new Date(currentDay))
             &&
-            <div className="h-full p-1 text-indigo-700 transition-colors duration-150 border border-[#4F46E5] rounded focus:shadow-outline bg-[#F5F3FF] font-Inter flex hover:cursor-pointer items-center justify-center">
-              <div className="bg-[#4F46E5] border p-2 flex items-center justify-center rounded h-full w-[54px]">
-                <FontAwesomeIcon className='text-white' icon={faKey} />
+            <label htmlFor='skip-modal' className='h-full p-1 text-indigo-700 transition-colors duration-150 border border-[#4F46E5] rounded focus:shadow-outline bg-[#F5F3FF] font-Inter  hover:cursor-pointer'>
+              <div className="flex items-center justify-center h-full">
+                <div className="bg-[#4F46E5] border p-2 flex items-center justify-center rounded h-full w-[54px]">
+                  <FontAwesomeIcon className='text-white' icon={faKey} />
+                </div>
+                <p className="mx-5 text-xl font-semibold font-Inter">Check In</p>
               </div>
-              <p className="mx-5 text-xl font-semibold font-Inter">Check In</p>
-            </div>
+            </label>
           }
         </div>
       </div>
 
-      {eventsData?.data.length > 0 &&
+      {
+        eventsData?.data.length > 0 &&
         <React.Fragment>
           <div className='mx-6 mt-6 bg-white'>
             <div className='flex items-center justify-between'>
               <p className='font-Inter'>Events</p>
               {eventsData?.data.length > 1 &&
                 <div className="flex w-[10%] justify-between">
-                  <button className="btn btn-ghost" onClick={() => {
+                  <button className="btn btn-ghost" aria-label="Last week" title="Last week" onClick={() => {
                     carouselRef.current?.previous();
                   }}>
                     <Image src="/svg/arrow-left.svg" height={16} width={10} />
                   </button>
-                  <button className="btn btn-ghost" onClick={() => {
+                  <button className="btn btn-ghost" aria-label="Next week" title="Nextb week" onClick={() => {
                     carouselRef.current?.next()
                   }}>
                     <Image src="/svg/arrow-right.svg" height={16} width={10} />
@@ -123,7 +135,7 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
           </div>
         </React.Fragment>
       }
-    </div>
+    </div >
 
   );
 };

@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { authApi } from "../apis/authApi";
+import { removeCookies } from "cookies-next";
+import Router from "next/router";
 
 type IAuthState = {
   token: string | null | undefined | boolean;
@@ -19,7 +21,11 @@ export const authSlice = createSlice({
     ) => {
       state.token = action.payload;
     },
-    logout: () => initialState,
+    logout: () => {
+      removeCookies("token");
+      Router.push('/login')
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
