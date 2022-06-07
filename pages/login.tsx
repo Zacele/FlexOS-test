@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextPage, NextPageContext } from "next";
 import React from "react";
 import { useLoginUserMutation } from "../redux/apis/authApi";
@@ -17,7 +18,7 @@ const Login: NextPage = () => {
       Router.push("/");
     }
   };
-  
+
   return (
     <div className="flex h-screen bg-gray-bg1">
 
