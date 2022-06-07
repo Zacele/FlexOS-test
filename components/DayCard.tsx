@@ -29,7 +29,7 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
     (error) => Promise.reject(error)
   );
 
-  const carouselRef = React.useRef(null)
+  const carouselRef = React.useRef<Carousel>(null)
 
   const [{ data: eventsData, loading, error }, refetch] = useAxios(
     `${process.env.API_URL}events?date=${currentDay}`
@@ -98,12 +98,12 @@ const DayCard: React.FC<DataCardProps> = ({ currentDay }) => {
               {eventsData?.data.length > 1 &&
                 <div className="flex w-[10%] justify-between">
                   <button className="btn btn-ghost" aria-label="Last week" title="Last week" onClick={() => {
-                    carouselRef.current?.previous();
+                    carouselRef.current?.previous(2);
                   }}>
                     <Image src="/svg/arrow-left.svg" height={16} width={10} />
                   </button>
                   <button className="btn btn-ghost" aria-label="Next week" title="Nextb week" onClick={() => {
-                    carouselRef.current?.next()
+                    carouselRef.current?.next(2)
                   }}>
                     <Image src="/svg/arrow-right.svg" height={16} width={10} />
                   </button>
